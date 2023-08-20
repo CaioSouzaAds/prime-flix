@@ -1,6 +1,7 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 //import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import api from "../../services/api";
 
@@ -8,13 +9,15 @@ import "./filme-info.css";
 
 function Filme() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [filme, setFilme] = useState({});
   const [loading, setLoading] = useState(true);
 
+
   useEffect(() => {
     async function loadFilme() {
-      await api
-        .get(`/movie/${id}`, {
+      await api.get(`/movie/${id}`, {
           params: {
             api_key: "159a3ae7dfb9b27901289b32d78d593e",
             language: "pt-BR",
@@ -26,6 +29,8 @@ function Filme() {
         })
         .catch(() => {
           console.log("Filme Não encontrado");
+          navigate("/", {replace: true});
+          return;
         });
     }
 
@@ -34,7 +39,8 @@ function Filme() {
     return () => {
       console.log("COMPONENTE DESMONTADO");
     };
-  }, []);
+  
+  }, [id,navigate]);
 
   if (loading) {
     return (
@@ -59,7 +65,7 @@ function Filme() {
       <div className="area-buttons">
         <button>Salvar</button>
         <button>
-          <a href="#">Trailer</a>
+          <a target="blank" rel="external" href={`https://youtube.com/results?search_query=${filme.title} Trailer`}>Trailer</a>
         </button>
       </div>
     </div>
