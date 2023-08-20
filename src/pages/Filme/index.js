@@ -14,10 +14,10 @@ function Filme() {
   const [filme, setFilme] = useState({});
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
     async function loadFilme() {
-      await api.get(`/movie/${id}`, {
+      await api
+        .get(`/movie/${id}`, {
           params: {
             api_key: "159a3ae7dfb9b27901289b32d78d593e",
             language: "pt-BR",
@@ -29,7 +29,7 @@ function Filme() {
         })
         .catch(() => {
           console.log("Filme Não encontrado");
-          navigate("/", {replace: true});
+          navigate("/", { replace: true });
           return;
         });
     }
@@ -39,8 +39,26 @@ function Filme() {
     return () => {
       console.log("COMPONENTE DESMONTADO");
     };
-  
-  }, [id,navigate]);
+  }, [id, navigate]);
+
+  function salvarFilme() {
+    const minhaLista = localStorage.getItem("@primeflix");
+
+    let filmesSalvos = JSON.parse(minhaLista) || [];
+
+    const hasFilme = filmesSalvos.some(
+      (filmesSalvo) => filmesSalvo.id === filme.id
+    );
+
+    if (hasFilme) {
+      alert("FILME ESCOLHINDO JÁ ESTÁ NA LISTA");
+      return;
+    }
+
+    filmesSalvos.push(filme);
+    localStorage.setItem("@primeflix", JSON.stringify(filmesSalvos));
+    alert("FILME SALVO COM SUCESSO");
+  }
 
   if (loading) {
     return (
@@ -63,9 +81,15 @@ function Filme() {
       <strong>Avaliação: {filme.vote_average} /10</strong>
 
       <div className="area-buttons">
-        <button>Salvar</button>
+        <button onClick={salvarFilme}>Salvar</button>
         <button>
-          <a target="blank" rel="external" href={`https://youtube.com/results?search_query=${filme.title} Trailer`}>Trailer</a>
+          <a
+            target="blank"
+            rel="external"
+            href={`https://youtube.com/results?search_query=${filme.title} Trailer`}
+          >
+            Trailer
+          </a>
         </button>
       </div>
     </div>
