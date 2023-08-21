@@ -5,7 +5,7 @@ import "./favoritos.css";
 
 function Favoritos() {
   const [filmes, setFilme] = useState([]);
-  const [favoritos, setFavoritos] = useState(true);
+  const [favoritos, setFavoritos] = useState(false);
 
   useEffect(() => {
     const meusFavoritos = localStorage.getItem("@primeflix");
@@ -13,10 +13,17 @@ function Favoritos() {
     if (meusFavoritos) {
       setFilme(JSON.parse(meusFavoritos));
       setFavoritos(true);
-    } else {
-      setFavoritos(false);
     }
+
   }, []);
+
+  function excluirFilme(id) {
+    const novaLista = filmes.filter(filme => filme.id !== id);
+
+    setFilme(novaLista);
+
+    localStorage.setItem("@primeflix", JSON.stringify(novaLista));
+  }
 
   return (
     <div className="div-h1">
@@ -35,7 +42,7 @@ function Favoritos() {
               />
               <div className="buttons">
                 <Link to={`/filme/${item.id}`}>Ver detalhes</Link>
-                <button>Excluir</button>
+                <button onClick={() => excluirFilme(item.id)}>Excluir</button>
               </div>
             </article>
           );
